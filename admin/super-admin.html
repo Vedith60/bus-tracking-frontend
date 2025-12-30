@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen">
+        <!-- Navigation -->
+        <nav class="bg-blue-600 text-white p-4">
+            <div class="container mx-auto flex justify-between items-center">
+                <h1 class="text-xl font-bold">Bus Tracking System - Super Admin</h1>
+                <div>
+                    <span id="userEmail" class="mr-4"></span>
+                    <button id="logoutBtn" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded">Logout</button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container mx-auto p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Create Admin Form -->
+                <div class="bg-white p-6 rounded-lg shadow-md lg:col-span-1">
+                    <h2 class="text-xl font-bold mb-4">Create New Admin</h2>
+                    <form id="createAdminForm">
+                        <div class="mb-4">
+                            <label class="block text-gray-700">Name</label>
+                            <input type="text" id="adminName" required class="w-full px-3 py-2 border rounded">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700">Email</label>
+                            <input type="email" id="adminEmail" required class="w-full px-3 py-2 border rounded">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700">Password</label>
+                            <input type="password" id="adminPassword" required class="w-full px-3 py-2 border rounded">
+                        </div>
+                        <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">
+                            Create Admin
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Admins List -->
+                <div class="bg-white p-6 rounded-lg shadow-md lg:col-span-2">
+                    <h2 class="text-xl font-bold mb-4">Manage Admins</h2>
+                    <div id="adminsList" class="space-y-3">
+                        <!-- Admins will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check if user is super admin
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('token');
+            const userRole = localStorage.getItem('userRole');
+            
+            if (!token || userRole !== 'super_admin') {
+                alert('Access denied. Super admin privileges required.');
+                window.location.href = '../login.html';
+                return;
+            }
+
+            // Display user email
+            const userEmail = localStorage.getItem('userEmail');
+            document.getElementById('userEmail').textContent = userEmail;
+
+            // Load admins
+            loadAdmins();
+
+            // Create admin form submission
+            document.getElementById('createAdminForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('adminName').value;
+                const email = document.getElementById('adminEmail').value;
+                const password = document.getElementById('adminPassword').value;
+
+                try {
+                    const response = await fetch('https://bus-tracking-backend-xemb.onrender.com/api/super-admin/admins', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ name, email, password })
+                    });
+
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        alert('Admin created successfully!');
+                        document.getElementById('createAdminForm').reset();
+                        loadAdmins(); // Refresh the list
+                    } else {
+                        alert('Error creating admin: ' + data.message);
+                    }
+                } catch (error) {
+                    alert('Error creating admin: ' + error.message);
+                }
+            });
+
+            // Logout functionality
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                localStorage.removeItem('token');
+                localStorage.removeItem('userRole');
+                localStorage.removeItem('userEmail');
+                localStorage.removeItem('userId');
+                window.location.href = '../login.html';
+            });
+        });
+
+        async function loadAdmins() {
+            const token = localStorage.getItem('token');
+            
+            try {
+                const response = await fetch('https://bus-tracking-backend-xemb.onrender.com/api/super-admin/admins', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    displayAdmins(data.admins);
+                } else {
+                    alert('Error loading admins: ' + data.message);
+                }
+            } catch (error) {
+                alert('Error loading admins: ' + error.message);
+            }
+        }
+
+        function displayAdmins(admins) {
+            const adminsList = document.getElementById('adminsList');
+            
+            if (admins.length === 0) {
+                adminsList.innerHTML = '<p class="text-gray-500">No admins found</p>';
+                return;
+            }
+
+            const adminElements = admins.map(admin => {
+                let buttonsHtml = '';
+                if (!admin.is_super_admin && admin.id != localStorage.getItem('userId')) {
+                    buttonsHtml = 
+                        '<button onclick="resetAdminPassword(' + admin.id + ', \'' + admin.name + '\');" class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm">' +
+                        'Reset Password' +
+                        '</button>' +
+                        '<button onclick="deleteAdmin(' + admin.id + ', \'' + admin.name + '\');" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm ml-2">' +
+                        'Delete' +
+                        '</button>';
+                } else if (admin.id == localStorage.getItem('userId')) {
+                    buttonsHtml = '<button onclick="changeOwnPassword();" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">Change Password</button>';
+                } else {
+                    buttonsHtml = '<span class="text-gray-400 text-sm">Cannot modify</span>';
+                }
+                            
+                let roleText = admin.is_super_admin ? 'Super Admin' : 'Regular Admin';
+                let roleClass = admin.is_super_admin ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800';
+                let createdDate = new Date(admin.created_at).toLocaleDateString();
+                            
+                return '<div class="flex items-center justify-between p-3 border rounded hover:bg-gray-50">' +
+                       '<div>' +
+                       '<h3 class="font-medium">' + admin.name + '</h3>' +
+                       '<p class="text-sm text-gray-600">' + admin.email + '</p>' +
+                       '<span class="text-xs px-2 py-1 rounded ' + roleClass + '">' +
+                       roleText +
+                       '</span>' +
+                       '<span class="text-xs text-gray-500 ml-2">Created: ' + createdDate + '</span>' +
+                       '</div>' +
+                       '<div class="flex space-x-2">' +
+                       buttonsHtml +
+                       '</div>' +
+                       '</div>';
+            });
+                        
+            adminsList.innerHTML = adminElements.join('');
+        }
+
+        async function deleteAdmin(adminId, adminName) {
+            // Properly escape the admin name for use in confirm
+            const escapedAdminName = adminName.replace(/'/g, "'");
+            if (!confirm(`Are you sure you want to delete admin "\${escapedAdminName}"?`)) {
+                return;
+            }
+
+            const token = localStorage.getItem('token');
+            
+            try {
+                const response = await fetch('https://bus-tracking-backend-xemb.onrender.com/api/super-admin/admins/' + adminId, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('Admin deleted successfully!');
+                    loadAdmins(); // Refresh the list
+                } else {
+                    alert('Error deleting admin: ' + data.message);
+                }
+            } catch (error) {
+                alert('Error deleting admin: ' + error.message);
+            }
+        }
+
+        async function resetAdminPassword(adminId, adminName) {
+            // Properly escape the admin name for use in prompt
+            const escapedAdminName = adminName.replace(/'/g, "'");
+            const newPassword = prompt(`Enter new password for admin "\${escapedAdminName}":`);
+            if (!newPassword || newPassword.length < 6) {
+                if (newPassword !== null) {
+                    alert('Password must be at least 6 characters long.');
+                }
+                return;
+            }
+
+            const token = localStorage.getItem('token');
+            
+            try {
+                const response = await fetch('https://bus-tracking-backend-xemb.onrender.com/api/super-admin/admins/' + adminId + '/reset-password', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify({ password: newPassword })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('Password reset successfully!');
+                } else {
+                    alert('Error resetting password: ' + data.message);
+                }
+            } catch (error) {
+                alert('Error resetting password: ' + error.message);
+            }
+        }
+
+        function changeOwnPassword() {
+            window.location.href = 'profile.html';
+        }
+    </script>
+</body>
+</html>

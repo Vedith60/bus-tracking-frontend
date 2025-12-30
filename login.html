@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Tracking System - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+        <div class="bg-white rounded-lg shadow-xl p-6 sm:p-8">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800">Bus Tracking System</h1>
+                <p class="text-gray-600 mt-2">Sign in to your account</p>
+            </div>
+            
+            <div class="mb-6">
+                <div class="flex border-b border-gray-200">
+                    <button id="adminTab" class="flex-1 py-2 px-4 text-center font-medium text-blue-600 border-b-2 border-blue-600">
+                        Admin Login
+                    </button>
+                    <button id="supervisorTab" class="flex-1 py-2 px-4 text-center font-medium text-gray-500 hover:text-gray-700">
+                        Supervisor Login
+                    </button>
+                </div>
+            </div>
+            
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" id="email" name="email" required 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input type="password" id="password" name="password" required 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="remember" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                        <label for="remember" class="ml-2 block text-sm text-gray-700">Remember me</label>
+                    </div>
+                </div>
+                
+                <button type="submit" id="loginButton" 
+                        class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">
+                    Sign In
+                </button>
+            </form>
+            
+            <div id="errorMessage" class="mt-4 hidden text-red-600 text-sm text-center"></div>
+            
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600">
+                    Don't have an account? <a href="mailto:mallurivedith@gmail.com" target="_blank">Contact us</a>
+                    <!-- <a href="#" id="registerLink" class="font-medium text-blue-600 hover:text-blue-500">Register as Admin</a> -->
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        const adminTab = document.getElementById('adminTab');
+        const supervisorTab = document.getElementById('supervisorTab');
+        const loginForm = document.getElementById('loginForm');
+        const loginButton = document.getElementById('loginButton');
+        const registerLink = document.getElementById('registerLink');
+        const errorMessage = document.getElementById('errorMessage');
+        
+        let currentRole = 'admin'; // Default role
+        
+        adminTab.addEventListener('click', () => {
+            currentRole = 'admin';
+            adminTab.className = "flex-1 py-2 px-4 text-center font-medium text-blue-600 border-b-2 border-blue-600";
+            supervisorTab.className = "flex-1 py-2 px-4 text-center font-medium text-gray-500 hover:text-gray-700";
+            loginButton.textContent = "Sign In as Admin";
+            registerLink.textContent = "Register as Admin";
+            registerLink.href = "#";
+            registerLink.onclick = showAdminRegistration;
+        });
+        
+        supervisorTab.addEventListener('click', () => {
+            currentRole = 'supervisor';
+            supervisorTab.className = "flex-1 py-2 px-4 text-center font-medium text-blue-600 border-b-2 border-blue-600";
+            adminTab.className = "flex-1 py-2 px-4 text-center font-medium text-gray-500 hover:text-gray-700";
+            loginButton.textContent = "Sign In as Supervisor";
+            registerLink.textContent = "Contact Admin";
+            registerLink.href = "#";
+            registerLink.onclick = () => alert('Please contact your administrator for access');
+        });
+        
+        // Form submission
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                let response;
+                if (currentRole === 'admin') {
+                    response = await fetch('https://bus-tracking-backend-xemb.onrender.com/api/auth/login-admin', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email, password })
+                    });
+                } else {
+                    response = await fetch('https://bus-tracking-backend-xemb.onrender.com/api/auth/login-supervisor', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email, password })
+                    });
+                }
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Store token and user info in localStorage
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    localStorage.setItem('userRole', data.user.role);
+                    localStorage.setItem('userEmail', data.user.email);
+                    localStorage.setItem('userId', data.user.id);
+                    
+                    // Redirect based on role
+                    if (data.user.role === 'super_admin') {
+                        window.location.href = '/frontend/admin/super-admin.html';
+                    } else if (data.user.role === 'admin') {
+                        window.location.href = '/frontend/admin/dashboard.html';
+                    } else {
+                        window.location.href = '/frontend/supervisor/dashboard.html';
+                    }
+                } else {
+                    errorMessage.textContent = data.message;
+                    errorMessage.classList.remove('hidden');
+                }
+            } catch (error) {
+                errorMessage.textContent = 'An error occurred. Please try again.';
+                errorMessage.classList.remove('hidden');
+            }
+        });
+        
+        // Admin registration function
+        function showAdminRegistration() {
+            // For now, just show an alert - in a real app you might show a registration form
+            alert('Admin registration would open here. In a real application, this would show the admin registration form.');
+        }
+        
+        // Initialize the page
+        loginButton.textContent = "Sign In as Admin";
+        registerLink.onclick = showAdminRegistration;
+    </script>
+</body>
+</html>

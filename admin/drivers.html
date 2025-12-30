@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drivers - Bus Tracking System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <!-- Mobile Menu Button -->
+    <div class="hamburger md:hidden fixed top-4 left-4 z-50">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    
+    <!-- Overlay for mobile menu -->
+    <div class="overlay" id="mobileOverlay"></div>
+    
+    <!-- Sidebar -->
+    <div class="flex">
+        <div class="w-64 bg-blue-800 text-white min-h-screen sidebar" id="sidebar">
+            <div class="p-6">
+                <h1 class="text-2xl font-bold">Bus Tracker</h1>
+                <p class="text-blue-200 text-sm">Admin Panel</p>
+            </div>
+            <nav class="mt-8">
+                <a href="dashboard.html" class="nav-link text-blue-100 hover:bg-blue-700 hover:text-white block py-3 px-6 border-l-4 border-transparent">
+                    <i class="fas fa-tachometer-alt mr-3"></i>Dashboard
+                </a>
+                <a href="buses.html" class="nav-link text-blue-100 hover:bg-blue-700 hover:text-white block py-3 px-6 border-l-4 border-transparent">
+                    <i class="fas fa-bus mr-3"></i>Buses
+                </a>
+                <a href="routes.html" class="nav-link text-blue-100 hover:bg-blue-700 hover:text-white block py-3 px-6 border-l-4 border-transparent">
+                    <i class="fas fa-route mr-3"></i>Routes
+                </a>
+                <a href="#" class="nav-link active bg-blue-700 text-white block py-3 px-6 border-l-4 border-white">
+                    <i class="fas fa-id-card mr-3"></i>Drivers
+                </a>
+                <a href="supervisors.html" class="nav-link text-blue-100 hover:bg-blue-700 hover:text-white block py-3 px-6 border-l-4 border-transparent">
+                    <i class="fas fa-user-tie mr-3"></i>Supervisors
+                </a>
+                <a href="trips.html" class="nav-link text-blue-100 hover:bg-blue-700 hover:text-white block py-3 px-6 border-l-4 border-transparent">
+                    <i class="fas fa-road mr-3"></i>Trips
+                </a>
+                <a href="maintenance.html" class="nav-link text-blue-100 hover:bg-blue-700 hover:text-white block py-3 px-6 border-l-4 border-transparent">
+                    <i class="fas fa-tools mr-3"></i>Maintenance
+                </a>
+                <a href="reports.html" class="nav-link text-blue-100 hover:bg-blue-700 hover:text-white block py-3 px-6 border-l-4 border-transparent">
+                    <i class="fas fa-chart-bar mr-3"></i>Reports
+                </a>
+                <a href="profile.html" class="nav-link text-blue-100 hover:bg-blue-700 hover:text-white block py-3 px-6 border-l-4 border-transparent">
+                    <i class="fas fa-user-circle mr-3"></i>Profile
+                </a>
+                <a href="#" id="logoutBtn" class="nav-link text-blue-100 hover:bg-blue-700 hover:text-white block py-3 px-6 border-l-4 border-transparent mt-4">
+                    <i class="fas fa-sign-out-alt mr-3"></i>Logout
+                </a>
+            </nav>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-1 p-8 main-content" id="mainContent">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800">Driver Management</h2>
+                <button id="addDriverBtn" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">
+                    <i class="fas fa-plus mr-2"></i>Add Driver
+                </button>
+            </div>
+            
+            <!-- Search and Filter -->
+            <div class="bg-white rounded-lg shadow p-6 mb-6">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+                    <div class="flex-1">
+                        <input type="text" id="searchInput" placeholder="Search drivers..." 
+                               class="w-full md:w-80 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div class="flex space-x-2">
+                        <select id="statusFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">All Status</option>
+                            <option value="valid">Valid License</option>
+                            <option value="expiring">Expiring Soon</option>
+                            <option value="expired">Expired License</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Drivers Table -->
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">License Number</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">License Expiry</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="driversTableBody" class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td colspan="6" class="px-6 py-4 text-center text-gray-500">Loading drivers...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Driver Modal -->
+    <div id="addDriverModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">Add New Driver</h3>
+                <button id="closeModalBtn" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="addDriverForm" class="space-y-4">
+                <div>
+                    <label for="driverName" class="block text-sm font-medium text-gray-700 mb-1">Driver Name</label>
+                    <input type="text" id="driverName" name="name" required
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                
+                <div>
+                    <label for="driverPhone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                    <input type="tel" id="driverPhone" name="phone_number"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                
+                <div>
+                    <label for="licenseNumber" class="block text-sm font-medium text-gray-700 mb-1">License Number</label>
+                    <input type="text" id="licenseNumber" name="license_number" required
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                
+                <div>
+                    <label for="licenseExpiry" class="block text-sm font-medium text-gray-700 mb-1">License Expiry Date</label>
+                    <input type="date" id="licenseExpiry" name="license_expiry_date" required
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" id="cancelBtn" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        Add Driver
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Edit Driver Modal -->
+    <div id="editDriverModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">Edit Driver</h3>
+                <button id="closeEditModalBtn" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="editDriverForm" class="space-y-4">
+                <input type="hidden" id="editDriverId">
+                <div>
+                    <label for="editDriverName" class="block text-sm font-medium text-gray-700 mb-1">Driver Name</label>
+                    <input type="text" id="editDriverName" name="name" required
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                
+                <div>
+                    <label for="editDriverPhone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                    <input type="tel" id="editDriverPhone" name="phone_number"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                
+                <div>
+                    <label for="editLicenseNumber" class="block text-sm font-medium text-gray-700 mb-1">License Number</label>
+                    <input type="text" id="editLicenseNumber" name="license_number" required
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                
+                <div>
+                    <label for="editLicenseExpiry" class="block text-sm font-medium text-gray-700 mb-1">License Expiry Date</label>
+                    <input type="date" id="editLicenseExpiry" name="license_expiry_date" required
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" id="cancelEditBtn" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        Update Driver
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Get token and user info from localStorage
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user'));
+        
+        // Check if user is logged in and is an admin
+        if (!token || !user || user.role !== 'admin') {
+            window.location.href = '/frontend/login.html';
+        }
+        
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/frontend/login.html';
+        });
+        
+        // Modal functionality
+        const addDriverModal = document.getElementById('addDriverModal');
+        const addDriverBtn = document.getElementById('addDriverBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        
+        addDriverBtn.addEventListener('click', () => {
+            addDriverModal.classList.remove('hidden');
+        });
+        
+        closeModalBtn.addEventListener('click', () => {
+            addDriverModal.classList.add('hidden');
+        });
+        
+        cancelBtn.addEventListener('click', () => {
+            addDriverModal.classList.add('hidden');
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === addDriverModal) {
+                addDriverModal.classList.add('hidden');
+            }
+        });
+        
+        // Function to make authenticated API calls
+        async function apiCall(url, options = {}) {
+            const fullUrl = url.startsWith('http') ? url : `https://bus-tracking-backend-xemb.onrender.com${url}`;
+            const response = await fetch(fullUrl, {
+                ...options,
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    ...options.headers
+                }
+            });
+            return response;
+        }
+        
+        // Load drivers
+        async function loadDrivers() {
+            try {
+                const response = await apiCall('/api/drivers');
+                if (response.ok) {
+                    const data = await response.json();
+                    const tbody = document.getElementById('driversTableBody');
+                    
+                    if (data.drivers && data.drivers.length > 0) {
+                        tbody.innerHTML = '';
+                        data.drivers.forEach(driver => {
+                            // Determine license status
+                            let licenseStatus = 'Valid';
+                            let statusColor = 'bg-green-100 text-green-800';
+                            
+                            const expiryDate = new Date(driver.license_expiry_date);
+                            const today = new Date();
+                            const diffTime = expiryDate - today;
+                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                            
+                            if (diffDays < 0) {
+                                licenseStatus = 'Expired';
+                                statusColor = 'bg-red-100 text-red-800';
+                            } else if (diffDays <= 30) {
+                                licenseStatus = 'Expiring Soon';
+                                statusColor = 'bg-yellow-100 text-yellow-800';
+                            }
+                            
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">${driver.name}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-500">${driver.phone_number || 'N/A'}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-500">${driver.license_number}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-500">${expiryDate.toLocaleDateString()}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColor}">
+                                        ${licenseStatus}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <button class="edit-driver text-blue-600 hover:text-blue-900 mr-3" data-id="${driver.id}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="delete-driver text-red-600 hover:text-red-900" data-id="${driver.id}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            `;
+                            tbody.appendChild(row);
+                        });
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-4 text-center text-gray-500">No drivers found</td></tr>';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading drivers:', error);
+                document.getElementById('driversTableBody').innerHTML = '<tr><td colspan="6" class="px-6 py-4 text-center text-red-500">Error loading drivers</td></tr>';
+            }
+        }
+        
+        // Add driver form submission
+        document.getElementById('addDriverForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('driverName').value,
+                phone_number: document.getElementById('driverPhone').value || null,
+                license_number: document.getElementById('licenseNumber').value,
+                license_expiry_date: document.getElementById('licenseExpiry').value
+            };
+            
+            try {
+                const response = await apiCall('/api/drivers', {
+                    method: 'POST',
+                    body: JSON.stringify(formData)
+                });
+                
+                if (response.ok) {
+                    document.getElementById('addDriverForm').reset();
+                    addDriverModal.classList.add('hidden');
+                    loadDrivers(); // Reload the drivers list
+                } else {
+                    const errorData = await response.json();
+                    alert(errorData.message || 'Error adding driver');
+                }
+            } catch (error) {
+                alert('Error adding driver: ' + error.message);
+            }
+        });
+        
+        // Edit driver modal functionality
+        const editDriverModal = document.getElementById('editDriverModal');
+        const closeEditModalBtn = document.getElementById('closeEditModalBtn');
+        const cancelEditBtn = document.getElementById('cancelEditBtn');
+        
+        closeEditModalBtn.addEventListener('click', () => {
+            editDriverModal.classList.add('hidden');
+        });
+        
+        cancelEditBtn.addEventListener('click', () => {
+            editDriverModal.classList.add('hidden');
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === editDriverModal) {
+                editDriverModal.classList.add('hidden');
+            }
+        });
+        
+        // Edit driver functionality
+        document.addEventListener('click', async (e) => {
+            if (e.target.closest('.edit-driver')) {
+                const driverId = e.target.closest('.edit-driver').dataset.id;
+                
+                try {
+                    const response = await apiCall(`/api/drivers/${driverId}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        document.getElementById('editDriverId').value = data.driver.id;
+                        document.getElementById('editDriverName').value = data.driver.name;
+                        document.getElementById('editDriverPhone').value = data.driver.phone_number || '';
+                        document.getElementById('editLicenseNumber').value = data.driver.license_number;
+                        document.getElementById('editLicenseExpiry').value = data.driver.license_expiry_date;
+                        
+                        editDriverModal.classList.remove('hidden');
+                    } else {
+                        alert('Error loading driver data');
+                    }
+                } catch (error) {
+                    alert('Error loading driver data: ' + error.message);
+                }
+            }
+        });
+        
+        // Update driver form submission
+        document.getElementById('editDriverForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const driverId = document.getElementById('editDriverId').value;
+            const formData = {
+                name: document.getElementById('editDriverName').value,
+                phone_number: document.getElementById('editDriverPhone').value || null,
+                license_number: document.getElementById('editLicenseNumber').value,
+                license_expiry_date: document.getElementById('editLicenseExpiry').value
+            };
+            
+            try {
+                const response = await apiCall(`/api/drivers/${driverId}`, {
+                    method: 'PUT',
+                    body: JSON.stringify(formData)
+                });
+                
+                if (response.ok) {
+                    editDriverModal.classList.add('hidden');
+                    loadDrivers(); // Reload the drivers list
+                } else {
+                    const errorData = await response.json();
+                    alert(errorData.message || 'Error updating driver');
+                }
+            } catch (error) {
+                alert('Error updating driver: ' + error.message);
+            }
+        });
+        
+        // Delete driver functionality
+        document.addEventListener('click', async (e) => {
+            if (e.target.closest('.delete-driver')) {
+                const driverId = e.target.closest('.delete-driver').dataset.id;
+                
+                if (confirm('Are you sure you want to delete this driver?')) {
+                    try {
+                        const response = await apiCall(`/api/drivers/${driverId}`, {
+                            method: 'DELETE'
+                        });
+                        
+                        if (response.ok) {
+                            loadDrivers(); // Reload the drivers list
+                        } else {
+                            const errorData = await response.json();
+                            alert(errorData.message || 'Error deleting driver');
+                        }
+                    } catch (error) {
+                        alert('Error deleting driver: ' + error.message);
+                    }
+                }
+            }
+        });
+        
+        // Load drivers when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDrivers();
+        });
+        
+        // Mobile menu functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const hamburger = document.querySelector('.hamburger');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const overlay = document.getElementById('mobileOverlay');
+            
+            if (hamburger) {
+                hamburger.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    sidebar.classList.toggle('hidden');
+                    overlay.classList.toggle('active');
+                    
+                    // Add class to main content to shift when sidebar is open
+                    if (!sidebar.classList.contains('hidden')) {
+                        mainContent.classList.add('shifted');
+                    } else {
+                        mainContent.classList.remove('shifted');
+                    }
+                });
+            }
+            
+            // Close sidebar when clicking on overlay
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('hidden');
+                overlay.classList.remove('active');
+                mainContent.classList.remove('shifted');
+            });
+            
+            // Close sidebar when clicking outside of it
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth < 768 && 
+                    !sidebar.classList.contains('hidden') && 
+                    !e.target.closest('#sidebar') && 
+                    !e.target.closest('.hamburger')) {
+                    sidebar.classList.add('hidden');
+                    overlay.classList.remove('active');
+                    mainContent.classList.remove('shifted');
+                }
+            });
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                if (window.innerWidth >= 768) {
+                    sidebar.classList.remove('hidden');
+                    overlay.classList.remove('active');
+                    mainContent.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

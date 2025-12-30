@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - Bus Tracking System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <!-- Sidebar -->
+    <div class="flex">
+        <div class="w-64 bg-blue-800 text-white min-h-screen">
+            <div class="p-6">
+                <h1 class="text-2xl font-bold">Bus Tracker</h1>
+                <p class="text-blue-200 text-sm">Admin Panel</p>
+            </div>
+            <nav class="mt-8">
+                <a href="dashboard.html" class="nav-link text-blue-100 hover:bg-blue-700 hover:text-white block py-3 px-6 border-l-4 border-transparent">
+                    <i class="fas fa-tachometer-alt mr-3"></i>Dashboard
+                </a>
+                <a href="buses.html" class="nav-link text-blue-100 hover:bg-blue-700 hover:text-white block py-3 px-6 border-l-4 border-transparent">
+                    <i class="fas fa-bus mr-3"></i>Buses
+                </a>
+                <a href="routes.html" class="nav-link text-blue-100 hover:bg-blue-700 hover:text-white block py-3 px-6 border-l-4 border-transparent">
+                    <i class="fas fa-route mr-3"></i>Routes
+                </a>
+                <a href="drivers.html" class="nav-link text-blue-100 hover:bg-blue-700 hover:text-white block py-3 px-6 border-l-4 border-transparent">
+                    <i class="fas fa-id-card mr-3"></i>Drivers
+                </a>
+                <a href="supervisors.html" class="nav-link text-blue-100 hover:bg-blue-700 hover:text-white block py-3 px-6 border-l-4 border-transparent">
+                    <i class="fas fa-user-tie mr-3"></i>Supervisors
+                </a>
+                <a href="trips.html" class="nav-link text-blue-100 hover:bg-blue-700 hover:text-white block py-3 px-6 border-l-4 border-transparent">
+                    <i class="fas fa-road mr-3"></i>Trips
+                </a>
+                <a href="maintenance.html" class="nav-link text-blue-100 hover:bg-blue-700 hover:text-white block py-3 px-6 border-l-4 border-transparent">
+                    <i class="fas fa-tools mr-3"></i>Maintenance
+                </a>
+                <a href="#" class="nav-link active bg-blue-700 text-white block py-3 px-6 border-l-4 border-white">
+                    <i class="fas fa-chart-bar mr-3"></i>Reports
+                </a>
+                <a href="profile.html" class="nav-link text-blue-100 hover:bg-blue-700 hover:text-white block py-3 px-6 border-l-4 border-transparent">
+                    <i class="fas fa-user-circle mr-3"></i>Profile
+                </a>
+                <a href="#" id="logoutBtn" class="nav-link text-blue-100 hover:bg-blue-700 hover:text-white block py-3 px-6 border-l-4 border-transparent mt-4">
+                    <i class="fas fa-sign-out-alt mr-3"></i>Logout
+                </a>
+            </nav>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-1 p-8">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800">Reports</h2>
+            </div>
+            
+            <!-- Report Tabs -->
+            <div class="bg-white rounded-lg shadow mb-6">
+                <div class="border-b border-gray-200">
+                    <nav class="flex -mb-px">
+                        <button id="tripReportsTab" class="tab-btn active py-4 px-6 text-center border-b-2 border-blue-500 text-blue-600 font-medium">
+                            Trip Reports
+                        </button>
+                        <button id="certificateReportsTab" class="tab-btn py-4 px-6 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium">
+                            Certificate Reports
+                        </button>
+                        <button id="maintenanceReportsTab" class="tab-btn py-4 px-6 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium">
+                            Maintenance Reports
+                        </button>
+                        <button id="driverReportsTab" class="tab-btn py-4 px-6 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium">
+                            Driver Reports
+                        </button>
+                    </nav>
+                </div>
+            </div>
+            
+            <!-- Trip Reports Section -->
+            <div id="tripReportsSection" class="bg-white rounded-lg shadow p-6 mb-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Trip Reports</h3>
+                    <div class="flex space-x-2">
+                        <input type="date" id="tripDateFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <select id="tripBusFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">All Buses</option>
+                        </select>
+                        <select id="tripDriverFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">All Drivers</option>
+                        </select>
+                        <button id="applyTripFilter" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                            Apply
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Trip Statistics -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div class="bg-blue-50 rounded-lg p-4">
+                        <div class="text-3xl font-bold text-blue-600" id="totalTrips">0</div>
+                        <div class="text-gray-600">Total Trips</div>
+                    </div>
+                    <div class="bg-green-50 rounded-lg p-4">
+                        <div class="text-3xl font-bold text-green-600" id="completedTrips">0</div>
+                        <div class="text-gray-600">Completed Trips</div>
+                    </div>
+                    <div class="bg-yellow-50 rounded-lg p-4">
+                        <div class="text-3xl font-bold text-yellow-600" id="activeTrips">0</div>
+                        <div class="text-gray-600">Active Trips</div>
+                    </div>
+                </div>
+                
+                <!-- Trip Reports Table -->
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bus</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Route</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Driver</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Time</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Time</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tripReportsTableBody" class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td colspan="5" class="px-6 py-4 text-center text-gray-500">Loading trip reports...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Certificate Reports Section (Hidden by default) -->
+            <div id="certificateReportsSection" class="bg-white rounded-lg shadow p-6 hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Certificate Reports</h3>
+                </div>
+                
+                <!-- Certificate Statistics -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                    <div class="bg-blue-50 rounded-lg p-4">
+                        <div class="text-3xl font-bold text-blue-600" id="totalCertificates">0</div>
+                        <div class="text-gray-600">Total Certificates</div>
+                    </div>
+                    <div class="bg-green-50 rounded-lg p-4">
+                        <div class="text-3xl font-bold text-green-600" id="validCertificates">0</div>
+                        <div class="text-gray-600">Valid Certificates</div>
+                    </div>
+                    <div class="bg-yellow-50 rounded-lg p-4">
+                        <div class="text-3xl font-bold text-yellow-600" id="expiringCertificates">0</div>
+                        <div class="text-gray-600">Expiring Soon</div>
+                    </div>
+                    <div class="bg-red-50 rounded-lg p-4">
+                        <div class="text-3xl font-bold text-red-600" id="expiredCertificates">0</div>
+                        <div class="text-gray-600">Expired Certificates</div>
+                    </div>
+                </div>
+                
+                <!-- Certificate Reports Table -->
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bus</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Certificate Type</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Number</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expiry Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="certificateReportsTableBody" class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td colspan="5" class="px-6 py-4 text-center text-gray-500">Loading certificate reports...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Driver Reports Section (Hidden by default) -->
+            <div id="driverReportsSection" class="bg-white rounded-lg shadow p-6 hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <h3 class="text-xl font-bold text-gray-800">Driver Reports</h3>
+                    <div class="flex flex-wrap gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Filter by Month</label>
+                            <select id="driverMonthFilter" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">All Months</option>
+                                <option value="0">January</option>
+                                <option value="1">February</option>
+                                <option value="2">March</option>
+                                <option value="3">April</option>
+                                <option value="4">May</option>
+                                <option value="5">June</option>
+                                <option value="6">July</option>
+                                <option value="7">August</option>
+                                <option value="8">September</option>
+                                <option value="9">October</option>
+                                <option value="10">November</option>
+                                <option value="11">December</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Filter by Year</label>
+                            <select id="driverYearFilter" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">All Years</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end">
+                            <button id="applyDriverFilter" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                Apply Filter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Driver Statistics -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                    <div class="bg-blue-50 rounded-lg p-4">
+                        <div class="text-3xl font-bold text-blue-600" id="totalDrivers">0</div>
+                        <div class="text-gray-600">Total Drivers</div>
+                    </div>
+                    <div class="bg-green-50 rounded-lg p-4">
+                        <div class="text-3xl font-bold text-green-600" id="activeDrivers">0</div>
+                        <div class="text-gray-600">Active Drivers</div>
+                    </div>
+                    <div class="bg-yellow-50 rounded-lg p-4">
+                        <div class="text-3xl font-bold text-yellow-600" id="totalTripsByDrivers">0</div>
+                        <div class="text-gray-600">Total Trips</div>
+                    </div>
+                    <div class="bg-purple-50 rounded-lg p-4">
+                        <div class="text-3xl font-bold text-purple-600" id="avgTripsPerDriver">0</div>
+                        <div class="text-gray-600">Avg. Trips/Driver</div>
+                    </div>
+                </div>
+                
+                <!-- Driver Reports Table -->
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Driver</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trips Completed</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Buses Handled</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Avg. Trip Duration</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="driverReportsTableBody" class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td colspan="5" class="px-6 py-4 text-center text-gray-500">Loading driver reports...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Maintenance Reports Section (Hidden by default) -->
+            <div id="maintenanceReportsSection" class="bg-white rounded-lg shadow p-6 hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <h3 class="text-xl font-bold text-gray-800">Maintenance Reports</h3>
+                    <div class="flex flex-wrap gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Filter by Month</label>
+                            <select id="maintenanceMonthFilter" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">All Months</option>
+                                <option value="0">January</option>
+                                <option value="1">February</option>
+                                <option value="2">March</option>
+                                <option value="3">April</option>
+                                <option value="4">May</option>
+                                <option value="5">June</option>
+                                <option value="6">July</option>
+                                <option value="7">August</option>
+                                <option value="8">September</option>
+                                <option value="9">October</option>
+                                <option value="10">November</option>
+                                <option value="11">December</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Filter by Year</label>
+                            <select id="maintenanceYearFilter" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">All Years</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end">
+                            <button id="applyMaintenanceFilter" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                Apply Filter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Maintenance Statistics -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                    <div class="bg-blue-50 rounded-lg p-4">
+                        <div class="text-3xl font-bold text-blue-600" id="totalMaintenance">0</div>
+                        <div class="text-gray-600">Total Maintenance</div>
+                    </div>
+                    <div class="bg-green-50 rounded-lg p-4">
+                        <div class="text-3xl font-bold text-green-600" id="recentMaintenance">0</div>
+                        <div class="text-gray-600">Recent (30 days)</div>
+                    </div>
+                    <div class="bg-yellow-50 rounded-lg p-4">
+                        <div class="text-3xl font-bold text-yellow-600" id="totalCost">₹0</div>
+                        <div class="text-gray-600">Total Cost</div>
+                    </div>
+                    <div class="bg-purple-50 rounded-lg p-4">
+                        <div class="text-3xl font-bold text-purple-600" id="avgCost">₹0</div>
+                        <div class="text-gray-600">Avg. Cost</div>
+                    </div>
+                </div>
+                
+                <!-- Maintenance Reports Table -->
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bus</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Driver</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subject</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cost</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="maintenanceReportsTableBody" class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td colspan="6" class="px-6 py-4 text-center text-gray-500">Loading maintenance reports...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Maintenance Detail Modal -->
+    <div id="maintenanceDetailModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg p-6 w-full max-w-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">Maintenance Details</h3>
+                <button id="closeMaintenanceDetailModal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div id="maintenanceDetailContent" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Bus Number</label>
+                        <p id="detailBusNumber" class="text-gray-900"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Driver</label>
+                        <p id="detailDriver" class="text-gray-900"></p>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Subject</label>
+                    <p id="detailSubject" class="text-gray-900 font-medium"></p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Cost</label>
+                    <p id="detailCost" class="text-gray-900 font-medium"></p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Maintenance Date</label>
+                    <p id="detailDate" class="text-gray-900"></p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Description</label>
+                    <p id="detailDescription" class="text-gray-900"></p>
+                </div>
+            </div>
+            
+            <div class="flex justify-end pt-4">
+                <button id="closeMaintenanceDetailModalBtn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get token and user info from localStorage
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user'));
+        
+        // Check if user is logged in and is an admin
+        if (!token || !user || user.role !== 'admin') {
+            window.location.href = '/frontend/login.html';
+        }
+        
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/frontend/login.html';
+        });
+        
+        // Tab switching functionality
+        const tripReportsTab = document.getElementById('tripReportsTab');
+        const certificateReportsTab = document.getElementById('certificateReportsTab');
+        const maintenanceReportsTab = document.getElementById('maintenanceReportsTab');
+        const driverReportsTab = document.getElementById('driverReportsTab');
+        const tripReportsSection = document.getElementById('tripReportsSection');
+        const certificateReportsSection = document.getElementById('certificateReportsSection');
+        const maintenanceReportsSection = document.getElementById('maintenanceReportsSection');
+        const driverReportsSection = document.getElementById('driverReportsSection');
+        
+        tripReportsTab.addEventListener('click', () => {
+            tripReportsTab.className = "tab-btn active py-4 px-6 text-center border-b-2 border-blue-500 text-blue-600 font-medium";
+            certificateReportsTab.className = "tab-btn py-4 px-6 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium";
+            maintenanceReportsTab.className = "tab-btn py-4 px-6 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium";
+            driverReportsTab.className = "tab-btn py-4 px-6 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium";
+            tripReportsSection.classList.remove('hidden');
+            certificateReportsSection.classList.add('hidden');
+            maintenanceReportsSection.classList.add('hidden');
+            driverReportsSection.classList.add('hidden');
+        });
+        
+        certificateReportsTab.addEventListener('click', () => {
+            certificateReportsTab.className = "tab-btn active py-4 px-6 text-center border-b-2 border-blue-500 text-blue-600 font-medium";
+            tripReportsTab.className = "tab-btn py-4 px-6 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium";
+            maintenanceReportsTab.className = "tab-btn py-4 px-6 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium";
+            driverReportsTab.className = "tab-btn py-4 px-6 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium";
+            certificateReportsSection.classList.remove('hidden');
+            tripReportsSection.classList.add('hidden');
+            maintenanceReportsSection.classList.add('hidden');
+            driverReportsSection.classList.add('hidden');
+            loadCertificateReports(); // Load certificate reports when tab is clicked
+        });
+        
+        maintenanceReportsTab.addEventListener('click', () => {
+            maintenanceReportsTab.className = "tab-btn active py-4 px-6 text-center border-b-2 border-blue-500 text-blue-600 font-medium";
+            tripReportsTab.className = "tab-btn py-4 px-6 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium";
+            certificateReportsTab.className = "tab-btn py-4 px-6 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium";
+            driverReportsTab.className = "tab-btn py-4 px-6 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium";
+            maintenanceReportsSection.classList.remove('hidden');
+            tripReportsSection.classList.add('hidden');
+            certificateReportsSection.classList.add('hidden');
+            driverReportsSection.classList.add('hidden');
+            loadMaintenanceReports(); // Load maintenance reports when tab is clicked
+        });
+        
+        driverReportsTab.addEventListener('click', () => {
+            driverReportsTab.className = "tab-btn active py-4 px-6 text-center border-b-2 border-blue-500 text-blue-600 font-medium";
+            tripReportsTab.className = "tab-btn py-4 px-6 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium";
+            certificateReportsTab.className = "tab-btn py-4 px-6 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium";
+            maintenanceReportsTab.className = "tab-btn py-4 px-6 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium";
+            driverReportsSection.classList.remove('hidden');
+            tripReportsSection.classList.add('hidden');
+            certificateReportsSection.classList.add('hidden');
+            maintenanceReportsSection.classList.add('hidden');
+            loadDriverReports(); // Load driver reports when tab is clicked
+        });
+        
+        // Function to format time for display in 12-hour format
+        function formatTimeDisplay(timeValue) {
+            if (!timeValue) return 'Not Set';
+            
+            // If timeValue is in datetime format (YYYY-MM-DD HH:MM:SS), extract just the time part
+            if (typeof timeValue === 'string' && timeValue.includes(' ')) {
+                const timePart = timeValue.split(' ')[1];
+                if (timePart) {
+                    // Convert to readable format like '2:07 PM'
+                    const [hours, minutes] = timePart.split(':');
+                    let hour = parseInt(hours, 10);
+                    const ampm = hour >= 12 ? 'PM' : 'AM';
+                    hour = hour % 12 || 12;
+                    return `${hour}:${minutes} ${ampm}`;
+                }
+            }
+            
+            // If it's already in HH:MM format
+            if (typeof timeValue === 'string' && /^\d{2}:\d{2}/.test(timeValue)) {
+                const [hours, minutes] = timeValue.split(':');
+                let hour = parseInt(hours, 10);
+                const ampm = hour >= 12 ? 'PM' : 'AM';
+                hour = hour % 12 || 12;
+                return `${hour}:${minutes} ${ampm}`;
+            }
+            
+            return timeValue;
+        }
+        
+        // Function to make authenticated API calls
+        async function apiCall(url, options = {}) {
+            const fullUrl = url.startsWith('http') ? url : `https://bus-tracking-backend-xemb.onrender.com${url}`;
+            const response = await fetch(fullUrl, {
+                ...options,
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    ...options.headers
+                }
+            });
+            return response;
+        }
+        
+        // Load trip reports
+        async function loadTripReports() {
+            try {
+                const date = document.getElementById('tripDateFilter').value;
+                const busId = document.getElementById('tripBusFilter').value;
+                const driverId = document.getElementById('tripDriverFilter').value;
+                
+                let url = '/api/reports/admin/trips';
+                const params = new URLSearchParams();
+                
+                if (date) params.append('date', date);
+                if (busId) params.append('bus_id', busId);
+                if (driverId) params.append('driver_id', driverId);
+                
+                if (params.toString()) {
+                    url += '?' + params.toString();
+                }
+                
+                const response = await apiCall(url);
+                if (response.ok) {
+                    const data = await response.json();
+                    const tbody = document.getElementById('tripReportsTableBody');
+                    
+                    // Update statistics
+                    document.getElementById('totalTrips').textContent = data.statistics.total;
+                    document.getElementById('completedTrips').textContent = data.statistics.completed;
+                    document.getElementById('activeTrips').textContent = data.statistics.active;
+                    
+                    if (data.trips && data.trips.length > 0) {
+                        tbody.innerHTML = '';
+                        data.trips.forEach(trip => {
+                            // Determine status color
+                            let statusColor = 'bg-gray-100 text-gray-800';
+                            if (trip.status === 'Active') {
+                                statusColor = 'bg-yellow-100 text-yellow-800';
+                            } else if (trip.status === 'Completed') {
+                                statusColor = 'bg-green-100 text-green-800';
+                            }
+                            
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">${trip.bus_number}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-500">${trip.route_name || trip.temporary_route || 'N/A'}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-500">${trip.driver_name}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-500">${new Date(trip.trip_date).toLocaleDateString()}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-500">${trip.start_time_12h || formatTimeDisplay(trip.start_time) || 'Not Set'}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-500">${trip.end_time_12h || formatTimeDisplay(trip.end_time) || 'Not Set'}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColor}">
+                                        ${trip.status}
+                                    </span>
+                                </td>
+                            `;
+                            tbody.appendChild(row);
+                        });
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No trip reports found</td></tr>';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading trip reports:', error);
+                document.getElementById('tripReportsTableBody').innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">Error loading trip reports</td></tr>';
+            }
+        }
+        
+        // Load certificate reports
+        async function loadCertificateReports() {
+            try {
+                const response = await apiCall('/api/reports/admin/certificates');
+                if (response.ok) {
+                    const data = await response.json();
+                    const tbody = document.getElementById('certificateReportsTableBody');
+                    
+                    // Update statistics
+                    document.getElementById('totalCertificates').textContent = data.statistics.total;
+                    document.getElementById('validCertificates').textContent = data.statistics.valid;
+                    document.getElementById('expiringCertificates').textContent = data.statistics.expiringSoon;
+                    document.getElementById('expiredCertificates').textContent = data.statistics.expired;
+                    
+                    if (data.certificates && data.certificates.length > 0) {
+                        tbody.innerHTML = '';
+                        data.certificates.forEach(cert => {
+                            // Determine status color
+                            let statusColor = 'bg-gray-100 text-gray-800';
+                            if (cert.status === 'Valid') {
+                                // Check if expiring soon
+                                const expiryDate = new Date(cert.expiry_date);
+                                const today = new Date();
+                                const diffTime = expiryDate - today;
+                                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                
+                                if (diffDays <= 30 && diffDays >= 0) {
+                                    statusColor = 'bg-yellow-100 text-yellow-800';
+                                } else {
+                                    statusColor = 'bg-green-100 text-green-800';
+                                }
+                            } else if (cert.status === 'Expired') {
+                                statusColor = 'bg-red-100 text-red-800';
+                            }
+                            
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">${cert.bus_number}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-500">${cert.certificate_type}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-500">${cert.certificate_number}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-500">${new Date(cert.expiry_date).toLocaleDateString()}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColor}">
+                                        ${cert.status}
+                                    </span>
+                                </td>
+                            `;
+                            tbody.appendChild(row);
+                        });
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No certificate reports found</td></tr>';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading certificate reports:', error);
+                document.getElementById('certificateReportsTableBody').innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">Error loading certificate reports</td></tr>';
+            }
+        }
+        
+        // Load buses for filter dropdown
+        async function loadBusesForFilter() {
+            try {
+                const response = await apiCall('/api/buses');
+                if (response.ok) {
+                    const data = await response.json();
+                    const busFilter = document.getElementById('tripBusFilter');
+                    busFilter.innerHTML = '<option value="">All Buses</option>';
+                    data.buses.forEach(bus => {
+                        const option = document.createElement('option');
+                        option.value = bus.id;
+                        option.textContent = bus.bus_number;
+                        busFilter.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading buses for filter:', error);
+            }
+        }
+        
+        // Load drivers for filter dropdown
+        async function loadDriversForFilter() {
+            try {
+                const response = await apiCall('/api/drivers');
+                if (response.ok) {
+                    const data = await response.json();
+                    const driverFilter = document.getElementById('tripDriverFilter');
+                    driverFilter.innerHTML = '<option value="">All Drivers</option>';
+                    data.drivers.forEach(driver => {
+                        const option = document.createElement('option');
+                        option.value = driver.id;
+                        option.textContent = driver.name;
+                        driverFilter.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading drivers for filter:', error);
+            }
+        }
+        
+        // Apply trip filter
+        document.getElementById('applyTripFilter').addEventListener('click', loadTripReports);
+        
+        // Load all data when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadBusesForFilter();
+            loadDriversForFilter();
+            loadTripReports(); // Load trip reports by default
+            loadDriverReports(); // Load driver reports by default
+        });
+        
+        // Load maintenance reports
+        async function loadMaintenanceReports() {
+            try {
+                const response = await apiCall('/api/maintenance');
+                if (response.ok) {
+                    const data = await response.json();
+                    maintenanceData = data.maintenance || [];
+                    
+                    // Populate year filter
+                    populateYearFilter();
+                    
+                    // Apply any existing filters
+                    const selectedMonth = document.getElementById('maintenanceMonthFilter').value;
+                    const selectedYear = document.getElementById('maintenanceYearFilter').value;
+                    
+                    let filteredData = maintenanceData;
+                    if (selectedMonth !== '' || selectedYear !== '') {
+                        filteredData = filterMaintenanceData(selectedMonth, selectedYear);
+                    }
+                    
+                    updateMaintenanceStatistics(filteredData);
+                    renderMaintenanceTable(filteredData);
+                }
+            } catch (error) {
+                console.error('Error loading maintenance reports:', error);
+                document.getElementById('maintenanceReportsTableBody').innerHTML = '<tr><td colspan="6" class="px-6 py-4 text-center text-red-500">Error loading maintenance reports</td></tr>';
+            }
+        }
+        
+        // Function to show maintenance detail modal
+        function showMaintenanceDetail(maintenance) {
+            document.getElementById('detailBusNumber').textContent = maintenance.bus_number || 'N/A';
+            document.getElementById('detailDriver').textContent = maintenance.driver_name || 'N/A';
+            document.getElementById('detailSubject').textContent = maintenance.subject;
+            document.getElementById('detailCost').textContent = '₹' + (maintenance.cost ? parseFloat(maintenance.cost).toFixed(2) : '0.00');
+            document.getElementById('detailDate').textContent = new Date(maintenance.maintenance_date).toLocaleDateString();
+            document.getElementById('detailDescription').textContent = maintenance.description || 'No description provided';
+            
+            document.getElementById('maintenanceDetailModal').classList.remove('hidden');
+        }
+        
+        // Close maintenance detail modal
+        document.getElementById('closeMaintenanceDetailModal').addEventListener('click', () => {
+            document.getElementById('maintenanceDetailModal').classList.add('hidden');
+        });
+        
+        document.getElementById('closeMaintenanceDetailModalBtn').addEventListener('click', () => {
+            document.getElementById('maintenanceDetailModal').classList.add('hidden');
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            const modal = document.getElementById('maintenanceDetailModal');
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+            }
+        });
+        
+        // Initialize maintenanceData
+        let maintenanceData = [];
+        
+        // Function to render maintenance table with data
+        function renderMaintenanceTable(data) {
+            const tbody = document.getElementById('maintenanceReportsTableBody');
+            
+            if (data && data.length > 0) {
+                tbody.innerHTML = '';
+                data.forEach(maintenance => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">${maintenance.bus_number || 'N/A'}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-500">${maintenance.driver_name || 'N/A'}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">${maintenance.subject}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">₹${maintenance.cost ? parseFloat(maintenance.cost).toFixed(2) : '0.00'}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-500">${new Date(maintenance.maintenance_date).toLocaleDateString()}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button onclick="showMaintenanceDetail(${JSON.stringify(maintenance).replace(/"/g, '&quot;')})" class="text-blue-600 hover:text-blue-900">View</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } else {
+                tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-4 text-center text-gray-500">No maintenance reports found</td></tr>';
+            }
+        }
+        
+        // Function to populate year filter
+        function populateYearFilter() {
+            const yearFilter = document.getElementById('maintenanceYearFilter');
+            const currentYear = new Date().getFullYear();
+            
+            // Clear existing options except the first one
+            yearFilter.innerHTML = '<option value="">All Years</option>';
+            
+            // Add years from 2020 to current year + 1
+            for (let year = 2020; year <= currentYear + 1; year++) {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                yearFilter.appendChild(option);
+            }
+        }
+        
+        // Function to filter maintenance data by month and year
+        function filterMaintenanceData(month, year) {
+            return maintenanceData.filter(maintenance => {
+                const maintenanceDate = new Date(maintenance.maintenance_date);
+                const monthMatch = month === '' || maintenanceDate.getMonth() == month;
+                const yearMatch = year === '' || maintenanceDate.getFullYear() == year;
+                return monthMatch && yearMatch;
+            });
+        }
+        
+        // Function to update statistics based on filtered data
+        function updateMaintenanceStatistics(data) {
+            // Update statistics
+            document.getElementById('totalMaintenance').textContent = data.length;
+            
+            // Calculate recent maintenance (last 30 days)
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            
+            let recentCount = 0;
+            let totalCost = 0;
+            
+            if (data && data.length > 0) {
+                data.forEach(maintenance => {
+                    const maintenanceDate = new Date(maintenance.maintenance_date);
+                    if (maintenanceDate >= thirtyDaysAgo) {
+                        recentCount++;
+                    }
+                    if (maintenance.cost) {
+                        totalCost += parseFloat(maintenance.cost);
+                    }
+                });
+                
+                document.getElementById('recentMaintenance').textContent = recentCount;
+                document.getElementById('totalCost').textContent = '₹' + totalCost.toFixed(2);
+                
+                // Calculate average cost
+                const avgCost = data.length > 0 ? totalCost / data.length : 0;
+                document.getElementById('avgCost').textContent = '₹' + avgCost.toFixed(2);
+            }
+        }
+        
+        // Apply maintenance filter
+        document.getElementById('applyMaintenanceFilter').addEventListener('click', () => {
+            const selectedMonth = document.getElementById('maintenanceMonthFilter').value;
+            const selectedYear = document.getElementById('maintenanceYearFilter').value;
+            
+            const filteredData = filterMaintenanceData(selectedMonth, selectedYear);
+            updateMaintenanceStatistics(filteredData);
+            renderMaintenanceTable(filteredData);
+        });
+        
+        // Driver reports functions
+        async function loadDriverReports() {
+            try {
+                console.log('Loading driver reports...');
+                const driversResponse = await apiCall('/api/drivers');
+                
+                // Get selected filters
+                const selectedMonth = document.getElementById('driverMonthFilter').value;
+                const selectedYear = document.getElementById('driverYearFilter').value;
+                
+                // Build trips API URL with filters
+                let tripsUrl = '/api/reports/admin/trips';
+                const params = new URLSearchParams();
+                
+                if (selectedYear !== '') params.append('year', selectedYear);
+                if (selectedMonth !== '') params.append('month', parseInt(selectedMonth) + 1); // Convert to 1-based month
+                
+                if (params.toString()) {
+                    tripsUrl += '?' + params.toString();
+                }
+                
+                const tripsResponse = await apiCall(tripsUrl);
+                
+                console.log('Drivers response:', driversResponse.ok);
+                console.log('Trips response:', tripsResponse.ok);
+                
+                if (driversResponse.ok && tripsResponse.ok) {
+                    const driversData = await driversResponse.json();
+                    const tripsData = await tripsResponse.json();
+                    
+                    console.log('Drivers data:', driversData);
+                    console.log('Trips data:', tripsData);
+                    
+                   const trips = tripsData.trips || tripsData.data || tripsData.rows || [];
+const driverStats = calculateDriverStats(driversData.drivers, trips);
+
+                    console.log('Driver stats:', driverStats);
+                    
+                    document.getElementById('totalDrivers').textContent = driversData.drivers.length;
+                    document.getElementById('activeDrivers').textContent = driverStats.activeDrivers;
+                    document.getElementById('totalTripsByDrivers').textContent = driverStats.totalTrips;
+                    document.getElementById('avgTripsPerDriver').textContent = driverStats.avgTripsPerDriver;
+                    
+                    renderDriverTable(driverStats.driversWithStats);
+                } else {
+                    console.error('Error: Failed to load drivers or trips data');
+                    console.error('Drivers response OK:', driversResponse.ok);
+                    console.error('Trips response OK:', tripsResponse.ok);
+                    document.getElementById('driverReportsTableBody').innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">Error loading drivers or trips data</td></tr>';
+                }
+            } catch (error) {
+                console.error('Error loading driver reports:', error);
+                document.getElementById('driverReportsTableBody').innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">Error loading driver reports: ' + error.message + '</td></tr>';
+            }
+        }
+        
+        function calculateDriverStats(drivers, trips) {
+            console.log('Calculating driver stats...');
+            console.log('Number of drivers:', drivers.length);
+            console.log('Number of trips:', trips.length);
+            
+            const driverMap = {};
+            
+            drivers.forEach(function(driver) {
+                driverMap[driver.id] = {
+                    id: driver.id,
+                    name: driver.name,
+                    tripsCompleted: 0,
+                    busesHandled: [],
+                    tripDurations: []
+                };
+            });
+            
+            trips.forEach(function(trip) {
+                console.log('Processing trip:', trip);
+                if (trip.driver_id && driverMap[trip.driver_id]) {
+                    const driverStat = driverMap[trip.driver_id];
+                    driverStat.tripsCompleted++;
+                    if (trip.bus_id) {
+                        if (driverStat.busesHandled.indexOf(trip.bus_id) === -1) {
+                            driverStat.busesHandled.push(trip.bus_id);
+                        }
+                    }
+                    
+                    // Calculate trip duration if start and end times exist
+                    if (trip.start_time && trip.end_time) {
+                        try {
+                            const start = new Date('1970-01-01T' + trip.start_time);
+                            const end = new Date('1970-01-01T' + trip.end_time);
+                            
+                            // Handle case where end time is next day (after midnight)
+                            if (end < start) {
+                                end.setTime(end.getTime() + 24 * 60 * 60 * 1000); // Add 24 hours
+                            }
+                            
+                            const durationMs = end - start;
+                            const durationHours = durationMs / (1000 * 60 * 60);
+                            
+                            // Only add to tripDurations if the calculation is valid
+                            if (!isNaN(durationHours) && isFinite(durationHours)) {
+                                driverStat.tripDurations.push(durationHours);
+                            }
+                        } catch (error) {
+                            console.error('Error calculating trip duration:', error, 'Trip:', trip);
+                        }
+                    }
+                }
+            });
+            
+            const driversWithStats = Object.values(driverMap).map(function(driver) {
+                // Calculate average trip duration in hours and minutes
+                let avgTripDuration = '0h 0m';
+                if (driver.tripDurations.length > 0) {
+                    const avgDuration = driver.tripDurations.reduce((sum, dur) => sum + dur, 0) / driver.tripDurations.length;
+                    if (!isNaN(avgDuration) && isFinite(avgDuration)) {
+                        const hours = Math.floor(avgDuration);
+                        const minutes = Math.round((avgDuration - hours) * 60);
+                        avgTripDuration = hours + 'h ' + minutes + 'm';
+                    }
+                }
+                
+                return {
+                    id: driver.id,
+                    name: driver.name,
+                    tripsCompleted: driver.tripsCompleted,
+                    busesHandled: driver.busesHandled.length,
+                    avgTripDuration: avgTripDuration
+                };
+            })
+            // .filter(function(driver) {
+            //     console.log('Filtering driver:', driver);
+            //     return driver.tripsCompleted > 0;
+            // });
+            
+            console.log('Final drivers with stats:', driversWithStats);
+            
+            const activeDrivers = driversWithStats.length;
+            const totalTrips = driversWithStats.reduce(function(sum, driver) {
+                return sum + driver.tripsCompleted;
+            }, 0);
+            const avgTripsPerDriver = activeDrivers > 0 ? Math.round(totalTrips / activeDrivers) : 0;
+            
+            console.log('Final stats - Active drivers:', activeDrivers, 'Total trips:', totalTrips, 'Avg trips per driver:', avgTripsPerDriver);
+            
+            return {
+                driversWithStats: driversWithStats,
+                activeDrivers: activeDrivers,
+                totalTrips: totalTrips,
+                avgTripsPerDriver: avgTripsPerDriver
+            };
+        }
+        
+        function renderDriverTable(data) {
+            const tbody = document.getElementById('driverReportsTableBody');
+            console.log('Rendering driver table with data:', data);
+            
+            if (data && data.length > 0) {
+                console.log('Data is valid and has', data.length, 'items');
+                tbody.innerHTML = '';
+                data.forEach(function(driver) {
+                    console.log('Rendering driver:', driver);
+                    const row = document.createElement('tr');
+                    row.innerHTML = '<td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-gray-900">' + driver.name + '</div></td>' +
+                                  '<td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">' + driver.tripsCompleted + '</div></td>' +
+                                  '<td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">' + driver.busesHandled + '</div></td>' +
+                                  '<td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">' + driver.avgTripDuration + '</div></td>' +
+                                  '<td class="px-6 py-4 whitespace-nowrap text-sm font-medium"><button onclick="showDriverDetail(' + JSON.stringify(driver).replace(/"/g, '&quot;') + ')" class="text-blue-600 hover:text-blue-900">View</button></td>';
+                    tbody.appendChild(row);
+                });
+            } else {
+                console.log('No data to render, showing empty message');
+                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No driver reports found</td></tr>';
+            }
+        }
+        
+        function showDriverDetail(driver) {
+            alert('Driver: ' + driver.name + '\nTrips Completed: ' + driver.tripsCompleted + '\nBuses Handled: ' + driver.busesHandled + '\nAvg. Trip Duration: ' + driver.avgTripDuration);
+        }
+        
+        document.getElementById('applyDriverFilter').addEventListener('click', loadDriverReports);
+        
+        function populateDriverYearFilter() {
+            const yearFilter = document.getElementById('driverYearFilter');
+            const currentYear = new Date().getFullYear();
+            
+            yearFilter.innerHTML = '<option value="">All Years</option>';
+            
+            for (var year = 2020; year <= currentYear + 1; year++) {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                yearFilter.appendChild(option);
+            }
+        }
+        populateDriverYearFilter();
+    </script>
+</body>
+</html>

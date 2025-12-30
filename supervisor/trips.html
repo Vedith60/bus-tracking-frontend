@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trips - Bus Tracking System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <!-- Mobile Menu Button -->
+    <div class="hamburger md:hidden fixed top-4 left-4 z-50">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    
+    <!-- Overlay for mobile menu -->
+    <div class="overlay" id="mobileOverlay"></div>
+    
+    <!-- Sidebar -->
+    <div class="flex">
+        <div class="w-64 bg-green-800 text-white min-h-screen sidebar" id="sidebar">
+            <div class="p-6">
+                <h1 class="text-2xl font-bold">Bus Tracker</h1>
+                <p class="text-green-200 text-sm">Supervisor Panel</p>
+            </div>
+            <nav class="mt-8">
+                <a href="dashboard.html" class="nav-link text-green-100 hover:bg-green-700 hover:text-white block py-3 px-6 border-l-4 border-transparent">
+                    <i class="fas fa-tachometer-alt mr-3"></i>Dashboard
+                </a>
+                <a href="#" class="nav-link active bg-green-700 text-white block py-3 px-6 border-l-4 border-white">
+                    <i class="fas fa-road mr-3"></i>Trips
+                </a>
+                <a href="maintenance.html" class="nav-link text-green-100 hover:bg-green-700 hover:text-white block py-3 px-6 border-l-4 border-transparent">
+                    <i class="fas fa-tools mr-3"></i>Maintenance
+                </a>
+                <!-- <a href="profile.html" class="nav-link text-green-100 hover:bg-green-700 hover:text-white block py-3 px-6 border-l-4 border-transparent">
+                    <i class="fas fa-user-circle mr-3"></i>Profile
+                </a> -->
+                <a href="#" id="logoutBtn" class="nav-link text-green-100 hover:bg-green-700 hover:text-white block py-3 px-6 border-l-4 border-transparent mt-4">
+                    <i class="fas fa-sign-out-alt mr-3"></i>Logout
+                </a>
+            </nav>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-1 p-8 main-content" id="mainContent">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800">Trip Management</h2>
+                <button id="addTripBtn" class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700">
+                    <i class="fas fa-plus mr-2"></i>Add Trip
+                </button>
+            </div>
+            
+            <!-- Search and Filter -->
+            <div class="bg-white rounded-lg shadow p-6 mb-6">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+                    <div class="flex-1">
+                        <input type="text" id="searchInput" placeholder="Search trips..." 
+                               class="w-full md:w-80 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                    </div>
+                    <div class="flex space-x-2">
+                        <select id="statusFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            <option value="">All Status</option>
+                            <option value="Active">Active</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                        <input type="date" id="dateFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Trips Table -->
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bus</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Route</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Driver</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Time</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Time</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tripsTableBody" class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td colspan="6" class="px-6 py-4 text-center text-gray-500">Loading trips...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Trip Modal -->
+    <div id="addTripModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg p-6 w-full max-w-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">Add New Trip</h3>
+                <button id="closeModalBtn" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="addTripForm" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="busSelect" class="block text-sm font-medium text-gray-700 mb-1">Bus</label>
+                        <select id="busSelect" name="bus_id" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            <option value="">Select Bus</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="driverSelect" class="block text-sm font-medium text-gray-700 mb-1">Driver</label>
+                        <select id="driverSelect" name="driver_id" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            <option value="">Select Driver</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="routeSelect" class="block text-sm font-medium text-gray-700 mb-1">Route</label>
+                        <select id="routeSelect" name="route_id"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            <option value="">Select Route (Optional)</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="temporaryRoute" class="block text-sm font-medium text-gray-700 mb-1">Temporary Route (Optional)</label>
+                        <input type="text" id="temporaryRoute" name="temporary_route"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                    </div>
+                    
+                    <div>
+                        <label for="tripDate" class="block text-sm font-medium text-gray-700 mb-1">Trip Date</label>
+                        <input type="date" id="tripDate" name="trip_date" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                    </div>
+                    
+                    <div>
+                        <label for="startTime" class="block text-sm font-medium text-gray-700 mb-1">Start Time</label>
+                        <div class="flex items-center">
+                            <input type="time" id="startTime" name="start_time"
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            <button type="button" id="setStartTimeNow" class="ml-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">
+                                Now
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="endTime" class="block text-sm font-medium text-gray-700 mb-1">End Time</label>
+                        <input type="time" id="endTime" name="end_time"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" id="cancelBtn" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                        Add Trip
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Get token and user info from localStorage
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user'));
+        
+        // Check if user is logged in and is a supervisor
+        if (!token || !user || user.role !== 'supervisor') {
+            window.location.href = '/frontend/login.html';
+        }
+        
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/frontend/login.html';
+        });
+        
+        // Modal functionality
+        const addTripModal = document.getElementById('addTripModal');
+        const addTripBtn = document.getElementById('addTripBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        
+        addTripBtn.addEventListener('click', () => {
+            addTripModal.classList.remove('hidden');
+            loadDropdowns(); // Load buses, drivers, and routes when modal opens
+        });
+        
+        closeModalBtn.addEventListener('click', () => {
+            addTripModal.classList.add('hidden');
+        });
+        
+        cancelBtn.addEventListener('click', () => {
+            addTripModal.classList.add('hidden');
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === addTripModal) {
+                addTripModal.classList.add('hidden');
+            }
+        });
+        
+        // Function to make authenticated API calls
+        async function apiCall(url, options = {}) {
+            const fullUrl = url.startsWith('http') ? url : `https://bus-tracking-backend-xemb.onrender.com${url}`;
+            const response = await fetch(fullUrl, {
+                ...options,
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    ...options.headers
+                }
+            });
+            return response;
+        }
+        
+        // Load dropdown options
+        async function loadDropdowns() {
+            try {
+                // Load buses
+                const busesResponse = await apiCall('/api/buses');
+                if (busesResponse.ok) {
+                    const busesData = await busesResponse.json();
+                    const busSelect = document.getElementById('busSelect');
+                    busSelect.innerHTML = '<option value="">Select Bus</option>';
+                    busesData.buses.forEach(bus => {
+                        const option = document.createElement('option');
+                        option.value = bus.id;
+                        option.textContent = bus.bus_number;
+                        busSelect.appendChild(option);
+                    });
+                }
+                
+                // Load drivers
+                const driversResponse = await apiCall('/api/drivers');
+                if (driversResponse.ok) {
+                    const driversData = await driversResponse.json();
+                    const driverSelect = document.getElementById('driverSelect');
+                    driverSelect.innerHTML = '<option value="">Select Driver</option>';
+                    driversData.drivers.forEach(driver => {
+                        const option = document.createElement('option');
+                        option.value = driver.id;
+                        option.textContent = driver.name;
+                        driverSelect.appendChild(option);
+                    });
+                }
+                
+                // Load routes
+                const routesResponse = await apiCall('/api/routes');
+                if (routesResponse.ok) {
+                    const routesData = await routesResponse.json();
+                    const routeSelect = document.getElementById('routeSelect');
+                    routeSelect.innerHTML = '<option value="">Select Route (Optional)</option>';
+                    routesData.routes.forEach(route => {
+                        const option = document.createElement('option');
+                        option.value = route.id;
+                        option.textContent = `${route.name} (${route.start_point} → ${route.end_point})`;
+                        routeSelect.appendChild(option);
+                    });
+                }
+                
+                // Set today's date as default
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('tripDate').value = today;
+            } catch (error) {
+                console.error('Error loading dropdowns:', error);
+            }
+        }
+        
+        // Load trips
+        async function loadTrips() {
+            try {
+                const response = await apiCall('/api/trips/supervisor');
+                if (response.ok) {
+                    const data = await response.json();
+                    const tbody = document.getElementById('tripsTableBody');
+                    
+                    if (data.trips && data.trips.length > 0) {
+                        tbody.innerHTML = '';
+                        data.trips.forEach(trip => {
+                            // Determine status color
+                            let statusColor = 'bg-gray-100 text-gray-800';
+                            if (trip.status === 'Active') {
+                                statusColor = 'bg-yellow-100 text-yellow-800';
+                            } else if (trip.status === 'Completed') {
+                                statusColor = 'bg-green-100 text-green-800';
+                            }
+                            
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">${trip.bus_number}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-500">${trip.route_name || trip.temporary_route || 'N/A'}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-500">${trip.driver_name}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-500">${new Date(trip.trip_date).toLocaleDateString()}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-500">${trip.start_time_12h || formatTimeDisplay(trip.start_time) || 'Not Set'}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-500">${trip.end_time_12h || formatTimeDisplay(trip.end_time) || 'Not Set'}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColor}">
+                                        ${trip.status}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    ${trip.status === 'Active' ? 
+                                        `<button class="complete-trip text-green-600 hover:text-green-900" data-id="${trip.id}">
+                                            <i class="fas fa-check"></i>
+                                        </button>` : ''}
+                                </td>
+                            `;
+                            tbody.appendChild(row);
+                        });
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-4 text-center text-gray-500">No trips found</td></tr>';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading trips:', error);
+                document.getElementById('tripsTableBody').innerHTML = '<tr><td colspan="6" class="px-6 py-4 text-center text-red-500">Error loading trips</td></tr>';
+            }
+        }
+        
+        // Add trip form submission
+        document.getElementById('addTripForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                bus_id: document.getElementById('busSelect').value,
+                driver_id: document.getElementById('driverSelect').value,
+                route_id: document.getElementById('routeSelect').value || null,
+                temporary_route: document.getElementById('temporaryRoute').value || null,
+                trip_date: document.getElementById('tripDate').value,
+                start_time: document.getElementById('startTime').value || null,
+                end_time: document.getElementById('endTime').value || null
+            };
+            
+            try {
+                const response = await apiCall('/api/trips', {
+                    method: 'POST',
+                    body: JSON.stringify(formData)
+                });
+                
+                if (response.ok) {
+                    document.getElementById('addTripForm').reset();
+                    addTripModal.classList.add('hidden');
+                    loadTrips(); // Reload the trips list
+                } else {
+                    const errorData = await response.json();
+                    alert(errorData.message || 'Error adding trip');
+                }
+            } catch (error) {
+                alert('Error adding trip: ' + error.message);
+            }
+        });
+        
+        // Function to format time for display in 12-hour format
+        function formatTimeDisplay(timeValue) {
+            if (!timeValue) return 'Not Set';
+            
+            // If timeValue is in datetime format (YYYY-MM-DD HH:MM:SS), extract just the time part
+            if (typeof timeValue === 'string' && timeValue.includes(' ')) {
+                const timePart = timeValue.split(' ')[1];
+                if (timePart) {
+                    // Convert to readable format like '2:07 PM'
+                    const [hours, minutes] = timePart.split(':');
+                    let hour = parseInt(hours, 10);
+                    const ampm = hour >= 12 ? 'PM' : 'AM';
+                    hour = hour % 12 || 12;
+                    return `${hour}:${minutes} ${ampm}`;
+                }
+            }
+            
+            // If it's already in HH:MM format
+            if (typeof timeValue === 'string' && /^\d{2}:\d{2}/.test(timeValue)) {
+                const [hours, minutes] = timeValue.split(':');
+                let hour = parseInt(hours, 10);
+                const ampm = hour >= 12 ? 'PM' : 'AM';
+                hour = hour % 12 || 12;
+                return `${hour}:${minutes} ${ampm}`;
+            }
+            
+            return timeValue;
+        }
+        
+        // Function to set current time in time input
+        function setCurrentTime(inputId) {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const timeString = `${hours}:${minutes}`;
+            document.getElementById(inputId).value = timeString;
+        }
+        
+        // Event listener for setting current time
+        document.getElementById('setStartTimeNow').addEventListener('click', () => {
+            setCurrentTime('startTime');
+        });
+        
+        // Complete trip functionality
+        document.addEventListener('click', async (e) => {
+            if (e.target.closest('.complete-trip')) {
+                const tripId = e.target.closest('.complete-trip').dataset.id;
+                
+                if (confirm('Are you sure you want to mark this trip as completed?')) {
+                    try {
+                        const now = new Date();
+                        // Format time in 24-hour format (HH:MM)
+                        const hours = String(now.getHours()).padStart(2, '0');
+                        const minutes = String(now.getMinutes()).padStart(2, '0');
+                        const currentTime = `${hours}:${minutes}`;
+                        
+                        const response = await apiCall(`/api/trips/${tripId}`, {
+                            method: 'PUT',
+                            body: JSON.stringify({ 
+                                status: 'Completed', 
+                                end_time: currentTime
+                            })
+                        });
+                        
+                        if (response.ok) {
+                            loadTrips(); // Reload the trips list
+                        } else {
+                            const errorData = await response.json();
+                            alert(errorData.message || 'Error completing trip');
+                        }
+                    } catch (error) {
+                        alert('Error completing trip: ' + error.message);
+                    }
+                }
+            }
+        });
+        
+
+        
+        // Load trips when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTrips();
+        });
+        
+        // Mobile menu functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const hamburger = document.querySelector('.hamburger');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const overlay = document.getElementById('mobileOverlay');
+            
+            if (hamburger) {
+                hamburger.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    sidebar.classList.toggle('hidden');
+                    overlay.classList.toggle('active');
+                    
+                    // Add class to main content to shift when sidebar is open
+                    if (!sidebar.classList.contains('hidden')) {
+                        mainContent.classList.add('shifted');
+                    } else {
+                        mainContent.classList.remove('shifted');
+                    }
+                });
+            }
+            
+            // Close sidebar when clicking on overlay
+            overlay.addEventListener('click', () => {
+                sidebar.classList.add('hidden');
+                overlay.classList.remove('active');
+                mainContent.classList.remove('shifted');
+            });
+            
+            // Close sidebar when clicking outside of it
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth < 768 && 
+                    !sidebar.classList.contains('hidden') && 
+                    !e.target.closest('#sidebar') && 
+                    !e.target.closest('.hamburger')) {
+                    sidebar.classList.add('hidden');
+                    overlay.classList.remove('active');
+                    mainContent.classList.remove('shifted');
+                }
+            });
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                if (window.innerWidth >= 768) {
+                    sidebar.classList.remove('hidden');
+                    overlay.classList.remove('active');
+                    mainContent.classList.remove('shifted');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

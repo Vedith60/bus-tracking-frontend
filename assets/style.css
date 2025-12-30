@@ -1,0 +1,225 @@
+/* Custom styles for the Bus Tracking System */
+
+/* Sidebar navigation active state */
+.nav-link.active {
+    background-color: #3b82f6;
+    color: white;
+}
+
+/* Table hover effect */
+table tr:hover {
+    background-color: #f3f4f6;
+}
+
+/* Modal overlay */
+.modal-overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Status badges */
+.status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status-valid {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.status-expired {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+.status-expiring {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.status-active {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.status-completed {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+/* Dashboard card hover effect */
+.dashboard-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+/* Button hover effects */
+.btn-hover:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+    
+    .sidebar-nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    
+    .main-content {
+        margin-left: 0;
+        padding: 1rem;
+    }
+}
+
+/* Loading spinner */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Mobile responsive styles */
+.sidebar {
+    transition: transform 0.3s ease;
+}
+
+.sidebar.hidden {
+    transform: translateX(-100%);
+    position: fixed;
+    z-index: 1000;
+}
+
+.sidebar-mobile {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1000;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+}
+
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+}
+
+.overlay.active {
+    display: block;
+}
+
+.hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 21px;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+.hamburger span {
+    height: 3px;
+    width: 100%;
+    background: #4f46e5;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+    .hamburger {
+        display: flex;
+    }
+    
+    .sidebar {
+        width: 250px !important;
+        position: fixed;
+        height: 100vh;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+    }
+    
+    .sidebar.hidden {
+        transform: translateX(-100%);
+    }
+    
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 1rem !important;
+    }
+    
+    .main-content.shifted {
+        transform: translateX(250px);
+    }
+    
+    .p-8 {
+        padding: 1rem !important;
+    }
+    
+    .text-3xl {
+        font-size: 1.5rem !important;
+    }
+    
+    .grid-cols-1, .md\\:grid-cols-2, .lg\\:grid-cols-3, .lg\\:grid-cols-4 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+    
+    .md\\:grid-cols-2 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+    
+    .flex-col-mobile {
+        flex-direction: column;
+    }
+    
+    .w-64 {
+        width: 16rem !important;
+    }
+    
+    .mobile-full-width {
+        width: 100% !important;
+    }
+    
+    .mobile-padding {
+        padding: 0.5rem !important;
+    }
+    
+    .mobile-mb-4 {
+        margin-bottom: 1rem !important;
+    }
+    
+    .justify-between-mobile {
+        justify-content: flex-start !important;
+    }
+    
+    .text-center-mobile {
+        text-align: center !important;
+    }
+}

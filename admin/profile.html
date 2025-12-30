@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings - Bus Tracking System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <!-- Sidebar -->
+    <div class="flex">
+        <div class="w-64 bg-blue-800 text-white min-h-screen">
+            <div class="p-6">
+                <h1 class="text-2xl font-bold">Bus Tracker</h1>
+                <p class="text-blue-200 text-sm">Admin Panel</p>
+            </div>
+            <nav class="mt-8">
+                <a href="dashboard.html" class="nav-link text-blue-100 hover:bg-blue-700 hover:text-white block py-3 px-6 border-l-4 border-transparent">
+                    <i class="fas fa-tachometer-alt mr-3"></i>Dashboard
+                </a>
+                <a href="buses.html" class="nav-link text-blue-100 hover:bg-blue-700 hover:text-white block py-3 px-6 border-l-4 border-transparent">
+                    <i class="fas fa-bus mr-3"></i>Buses
+                </a>
+                <a href="routes.html" class="nav-link text-blue-100 hover:bg-blue-700 hover:text-white block py-3 px-6 border-l-4 border-transparent">
+                    <i class="fas fa-route mr-3"></i>Routes
+                </a>
+                <a href="drivers.html" class="nav-link text-blue-100 hover:bg-blue-700 hover:text-white block py-3 px-6 border-l-4 border-transparent">
+                    <i class="fas fa-id-card mr-3"></i>Drivers
+                </a>
+                <a href="supervisors.html" class="nav-link text-blue-100 hover:bg-blue-700 hover:text-white block py-3 px-6 border-l-4 border-transparent">
+                    <i class="fas fa-user-tie mr-3"></i>Supervisors
+                </a>
+                <a href="trips.html" class="nav-link text-blue-100 hover:bg-blue-700 hover:text-white block py-3 px-6 border-l-4 border-transparent">
+                    <i class="fas fa-road mr-3"></i>Trips
+                </a>
+                 <a href="maintenance.html" class="nav-link text-blue-100 hover:bg-blue-700 hover:text-white block py-3 px-6 border-l-4 border-transparent">
+                    <i class="fas fa-tools mr-3"></i>Maintenance
+                </a>
+                <a href="reports.html" class="nav-link text-blue-100 hover:bg-blue-700 hover:text-white block py-3 px-6 border-l-4 border-transparent">
+                    <i class="fas fa-chart-bar mr-3"></i>Reports
+                </a>
+                <a href="super-admin.html" id="superAdminLink" class="nav-link text-blue-100 hover:bg-blue-700 hover:text-white block py-3 px-6 border-l-4 border-transparent hidden">
+                    <i class="fas fa-crown mr-3"></i>Super Admin
+                </a>
+                <a href="profile.html" class="nav-link active bg-blue-700 text-white block py-3 px-6 border-l-4 border-white">
+                    <i class="fas fa-user-circle mr-3"></i>Profile
+                </a>
+                
+                <a href="#" id="logoutBtn" class="nav-link text-blue-100 hover:bg-blue-700 hover:text-white block py-3 px-6 border-l-4 border-transparent mt-4">
+                    <i class="fas fa-sign-out-alt mr-3"></i>Logout
+                </a>
+            </nav>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-1 p-8">
+            <div class="max-w-2xl">
+                <h2 class="text-3xl font-bold text-gray-800 mb-8">Profile Settings</h2>
+                
+                <!-- Profile Info Card -->
+                <div class="bg-white rounded-lg shadow p-6 mb-8">
+                    <h3 class="text-xl font-bold mb-4">Profile Information</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-gray-700 mb-1">Name</label>
+                            <p id="profileName" class="text-gray-900 font-medium">Loading...</p>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-1">Email</label>
+                            <p id="profileEmail" class="text-gray-900 font-medium">Loading...</p>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-1">Role</label>
+                            <p id="profileRole" class="text-gray-900 font-medium">Loading...</p>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 mb-1">Account Type</label>
+                            <p id="profileType" class="text-gray-900 font-medium">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Change Password Card -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-xl font-bold mb-4">Change Password</h3>
+                    <form id="changePasswordForm">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-1">Current Password</label>
+                            <input type="password" id="currentPassword" required 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 mb-1">New Password</label>
+                            <input type="password" id="newPassword" required 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <p class="text-sm text-gray-500 mt-1">Password must be at least 6 characters long</p>
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-gray-700 mb-1">Confirm New Password</label>
+                            <input type="password" id="confirmNewPassword" required 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <button type="submit" 
+                                class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">
+                            Change Password
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get token and user info from localStorage
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user'));
+        
+        // Check if user is logged in
+        if (!token || !user) {
+            window.location.href = '../login.html';
+        }
+        
+        // DOM Elements
+        const logoutBtn = document.getElementById('logoutBtn');
+        const changePasswordForm = document.getElementById('changePasswordForm');
+        const superAdminLink = document.getElementById('superAdminLink');
+        
+        // Display user profile info
+        document.getElementById('profileName').textContent = user.name || 'N/A';
+        document.getElementById('profileEmail').textContent = user.email || 'N/A';
+        document.getElementById('profileRole').textContent = user.role || 'N/A';
+        
+        // Set account type based on super admin status
+        if (user.is_super_admin) {
+            document.getElementById('profileType').textContent = 'Super Admin';
+        } else {
+            document.getElementById('profileType').textContent = 'Regular Admin';
+        }
+        
+        // Show super admin link if user is a super admin
+        if (user.role === 'super_admin') {
+            superAdminLink.classList.remove('hidden');
+        }
+        
+        // Change password form submission
+        changePasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+            
+            // Validate passwords match
+            if (newPassword !== confirmNewPassword) {
+                alert('New passwords do not match.');
+                return;
+            }
+            
+            try {
+                const response = await fetch('https://bus-tracking-backend-xemb.onrender.com/api/auth/change-password', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ 
+                        currentPassword, 
+                        newPassword 
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('Password changed successfully!');
+                    changePasswordForm.reset();
+                } else {
+                    alert('Error changing password: ' + data.message);
+                }
+            } catch (error) {
+                alert('Error changing password: ' + error.message);
+            }
+        });
+        
+        // Logout functionality
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userId');
+            window.location.href = '../login.html';
+        });
+    </script>
+</body>
+</html>
